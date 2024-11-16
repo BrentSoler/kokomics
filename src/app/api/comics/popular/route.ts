@@ -1,3 +1,4 @@
+import { TComics } from "@/types/comics/TComics";
 import puppeteer from "puppeteer";
 
 export async function GET() {
@@ -10,18 +11,21 @@ export async function GET() {
 
     await page.waitForSelector("#tab-mostview");
 
-    const get_popular = await page.evaluate(() => {
+    const get_popular: TComics[] = await page.evaluate(() => {
         const popular = document.getElementById("tab-mostview");
 
-        if (!popular) return;
+        //makes sure there is a #tab-mostview el
+        if (!popular) return [];
 
-        const popChild = Array.from(popular?.children).map((el) => {
+        const popChild: TComics[] = Array.from(popular?.children).map((el) => {
             return {
-                title: el.querySelector("a.title > span")?.textContent,
-                img: el.querySelector("a > img")?.getAttribute("src"),
+                title: el.querySelector("a.title > span")?.textContent ?? "",
+                img: el.querySelector("a > img")?.getAttribute("src") ?? "",
+                href: el.querySelector("a")?.getAttribute("href") ?? "",
             };
         });
 
+        // removes the more... element freom the child
         popChild.pop();
 
         return popChild;
