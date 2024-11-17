@@ -4,6 +4,15 @@ export type TComics = {
     href: string;
 };
 
+export type TComicLists = {
+    title: string;
+    href: string;
+};
+
 export type TComicSearch = {
     title: string;
+};
+
+export type TComicSearchListing = {
+    href: string;
 };

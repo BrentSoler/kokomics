@@ -1,36 +1,30 @@
 import { TComics } from "@/types/comics/TComics";
-import puppeteer from "puppeteer";
+import { scrapper } from "@/utils/scrapper";
 
 export async function GET() {
-    const browser = await puppeteer.launch();
-    const page = await browser.newPage();
+    const get_popular = await scrapper(async (page) => {
+        await page.waitForSelector("#tab-mostview");
 
-    await page.goto("https://readcomiconline.li/");
+        const get_popular: TComics[] = await page.evaluate(() => {
+            const popular = document.getElementById("tab-mostview");
 
-    await page.setViewport({ width: 1080, height: 1024 });
+            if (!popular) return [];
 
-    await page.waitForSelector("#tab-mostview");
+            const popChild: TComics[] = Array.from(popular?.children).map((el) => {
+                return {
+                    title: el.querySelector("a.title > span")?.textContent ?? "",
+                    img: el.querySelector("a > img")?.getAttribute("src") ?? "",
+                    href: el.querySelector("a")?.getAttribute("href") ?? "",
+                };
+            });
 
-    const get_popular: TComics[] = await page.evaluate(() => {
-        const popular = document.getElementById("tab-mostview");
+            popChild.pop();
 
-        //makes sure there is a #tab-mostview el
-        if (!popular) return [];
-
-        const popChild: TComics[] = Array.from(popular?.children).map((el) => {
-            return {
-                title: el.querySelector("a.title > span")?.textContent ?? "",
-                img: el.querySelector("a > img")?.getAttribute("src") ?? "",
-                href: el.querySelector("a")?.getAttribute("href") ?? "",
-            };
+            return popChild;
         });
 
-        // removes the more... element freom the child
-        popChild.pop();
-
-        return popChild;
+        return get_popular;
     });
-    await browser.close();
 
     return Response.json({ comics: get_popular });
 }
