@@ -16,3 +16,7 @@ export type TComicSearch = {
 export type TComicSearchListing = {
     href: string;
 };
+
+export type TComicIssueSearch = {
+    href: string;
+};
