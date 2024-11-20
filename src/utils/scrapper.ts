@@ -1,7 +1,9 @@
 import puppeteer, { Page } from "puppeteer";
 
 export async function scrapper<T>(cb: (page: Page) => T, url?: string) {
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+        devtools: false,
+    });
     const page = await browser.newPage();
 
     await page.goto(url ? url : process.env.NEXT_PUBLIC_COMIC_URL ?? "");

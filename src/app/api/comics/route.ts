@@ -6,14 +6,18 @@ export async function POST(req: NextRequest) {
     const body: TComicIssueSearch = await req.json();
 
     const comic_issue = await scrapper(async (page) => {
-        await page.waitForSelector("#selectReadType");
-        await page.click("#selectReadType");
-        await page.select("#selectReadType", "1");
+        // await page.waitForSelector("#selectReadType");
+        // await page.click("#selectReadType");
+        // await page.select("#selectReadType", "1");
 
-        await page.waitForSelector("#divImage");
-        await page.waitForSelector('img[src*="/Content/images/blank.gif"]', {
-            hidden: true,
-        });
+        await page.waitForSelector("#divImage", { timeout: 5000 });
+
+        await page.waitForSelector(
+            '::-p-xpath(//img[@src="/Content/images/blank.gif"])',
+            {
+                visible: false,
+            },
+        );
 
         const get_issue = await page.evaluate(() => {
             document.body.scrollIntoView(false);
@@ -31,7 +35,7 @@ export async function POST(req: NextRequest) {
         });
 
         return get_issue;
-    }, `${process.env.NEXT_PUBLIC_COMIC_URL}${body.href}`);
+    }, `${process.env.NEXT_PUBLIC_COMIC_URL}${body.href}&s=&readType=1`);
 
     return Response.json({ issue: comic_issue });
 }
