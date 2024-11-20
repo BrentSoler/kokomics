@@ -1,5 +1,5 @@
 import { TComics, TComicSearch } from "@/types/comics/TComics";
-import { scrapper } from "@/utils/scrapper";
+import { autoScroll, scrapper } from "@/utils/scrapper";
 import { NextRequest } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -11,6 +11,7 @@ export async function POST(req: NextRequest) {
         await page.click("#imgSearch");
 
         await page.waitForSelector(".list-comic");
+        await autoScroll(page);
 
         const get_result: TComics[] = await page.evaluate(() => {
             const searched = document.getElementsByClassName("list-comic");

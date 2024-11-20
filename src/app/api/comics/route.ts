@@ -1,26 +1,20 @@
 import { TComicIssueSearch } from "@/types/comics/TComics";
-import { scrapper } from "@/utils/scrapper";
+import { autoScroll, scrapper } from "@/utils/scrapper";
 import { NextRequest } from "next/server";
 
 export async function POST(req: NextRequest) {
     const body: TComicIssueSearch = await req.json();
 
     const comic_issue = await scrapper(async (page) => {
-        // await page.waitForSelector("#selectReadType");
-        // await page.click("#selectReadType");
-        // await page.select("#selectReadType", "1");
+        await autoScroll(page);
 
-        await page.waitForSelector("#divImage", { timeout: 5000 });
+        await page.waitForSelector("#divImage");
 
-        await page.waitForSelector(
-            '::-p-xpath(//img[@src="/Content/images/blank.gif"])',
-            {
-                visible: false,
-            },
-        );
+        const pg = await page.waitForSelector("#imgLoader", {
+            visible: false,
+        });
 
-        const get_issue = await page.evaluate(() => {
-            document.body.scrollIntoView(false);
+        const get_issue = await pg?.evaluate(() => {
             const comics = document.getElementById("divImage");
 
             if (!comics) return [];

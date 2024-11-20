@@ -3,7 +3,7 @@ import { scrapper } from "@/utils/scrapper";
 
 export async function GET() {
     const get_popular = await scrapper(async (page) => {
-        await page.waitForSelector("#tab-mostview");
+        // await page.waitForSelector("#tab-mostview");
 
         const get_popular: TComics[] = await page.evaluate(() => {
             const popular = document.getElementById("tab-mostview");
