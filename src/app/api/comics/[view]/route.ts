@@ -1,12 +1,13 @@
 import { TComics } from "@/types/comics/TComics";
 import { scrapper } from "@/utils/scrapper";
+import { NextRequest } from "next/server";
 
-export async function GET() {
-    const get_popular = await scrapper(async (page) => {
-        // await page.waitForSelector("#tab-mostview");
+export async function GET(req: NextRequest) {
+    const viewType = req.nextUrl.pathname.split("/")[3];
 
-        const get_popular: TComics[] = await page.evaluate(() => {
-            const popular = document.getElementById("tab-mostview");
+    const scrapped = await scrapper(async (page) => {
+        const get_view: TComics[] = await page.evaluate((view: string) => {
+            const popular = document.getElementById(`tab-${view}`);
 
             if (!popular) return [];
 
@@ -21,10 +22,10 @@ export async function GET() {
             popChild.pop();
 
             return popChild;
-        });
+        }, viewType);
 
-        return get_popular;
+        return get_view;
     });
 
-    return Response.json({ comics: get_popular });
+    return Response.json({ comics: scrapped });
 }
