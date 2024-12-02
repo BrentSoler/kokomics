@@ -2,8 +2,14 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
-  image: {
-    domains: ["https://readcomiconline.li/"],
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "readcomiconline.li",
+        pathname: "/Uploads/**",
+      },
+    ],
   },
 };
 
