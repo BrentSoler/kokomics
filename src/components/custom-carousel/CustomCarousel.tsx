@@ -1,17 +1,26 @@
-import { TComics } from "@/types/comics/TComics";
+"use client";
+
 import {
     Carousel,
     CarouselContent,
     CarouselNext,
     CarouselPrevious,
 } from "../ui/carousel";
+import CarouselLoading from "./CarouselLoading";
 import CutomCarouselItem from "./CutomCarouselItem";
+import { useGetComicsByCategories } from "@/utils/queries/useGetComicsByCategory";
 
-export default function CustomCarousel({ comics }: { comics?: TComics[] }) {
-    return (
-        <Carousel className="w-[50vw]">
+export default function CustomCarousel() {
+    const { data, isLoading } = useGetComicsByCategories("newest");
+
+    return isLoading ? (
+        <CarouselLoading />
+    ) : (
+        <Carousel className="w-[60vw]">
             <CarouselContent>
-                <CutomCarouselItem />
+                {data?.map((comic) => (
+                    <CutomCarouselItem key={comic.href} comic={comic} />
+                ))}
             </CarouselContent>
             <CarouselPrevious />
             <CarouselNext />
