@@ -1,5 +1,5 @@
 import { TComics, TComicSearch } from "@/types/comics/TComics";
-import { autoScroll, scrapper } from "@/utils/scrapper";
+import { scrapper } from "@/utils/scrapper";
 import { NextRequest } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -10,13 +10,31 @@ export async function POST(req: NextRequest) {
 
         await page.click("#imgSearch");
 
-        await page.waitForSelector(".list-comic");
-        await autoScroll(page);
-
-        const get_result: TComics[] = await page.evaluate(() => {
-            const searched = document.getElementsByClassName("list-comic");
+        const get_result: TComics[] = await page.evaluate(async () => {
+            const searched =
+                document.getElementsByClassName("list-comic") ||
+                document.getElementsByClassName("list-comic");
 
             if (!searched) return [];
+
+            await new Promise<void>((resolve) => {
+                let totalHeight = 0;
+                const distance = 100;
+                let scrolls = 0;
+                const timer = setInterval(() => {
+                    const scrollHeight = document.body.scrollHeight;
+                    window.scrollBy(0, distance);
+                    totalHeight += distance;
+                    scrolls++;
+                    if (
+                        totalHeight >= scrollHeight - window.innerHeight ||
+                        scrolls >= searched[0].children.length / 20
+                    ) {
+                        clearInterval(timer);
+                        resolve();
+                    }
+                }, 100);
+            });
 
             const result: TComics[] = Array.from(searched[0]?.children).map((el) => {
                 return {

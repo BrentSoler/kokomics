@@ -3,6 +3,7 @@ import puppeteer, { Page } from "puppeteer";
 export async function scrapper<T>(cb: (page: Page) => T, url?: string) {
     const browser = await puppeteer.launch({
         devtools: false,
+        headless: false,
     });
     const page = await browser.newPage();
 
@@ -24,13 +25,19 @@ export async function scrapper<T>(cb: (page: Page) => T, url?: string) {
 
     await page.setViewport({ width: 1080, height: 1024 });
 
-    const cb_return = await cb(page);
+    try {
+        const cb_return = await cb(page);
 
-    await page.close();
+        await page.close();
 
-    await browser.close();
+        await browser.close();
 
-    return cb_return;
+        return cb_return;
+    } catch (err) {
+        await page.close();
+
+        await browser.close();
+    }
 }
 
 export async function autoScroll(page: Page) {
