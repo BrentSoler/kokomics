@@ -12,6 +12,10 @@ export function useGetComicsByCategories(category: string) {
                     `/api/comics/${category}`,
                 );
 
+                if (res.isCached) {
+                    api(`/api/comics/${category}`, {}, { method: "PUT" });
+                }
+
                 return res.data;
             } catch (e: any) { }
         },
