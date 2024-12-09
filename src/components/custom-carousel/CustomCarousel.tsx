@@ -1,29 +1,25 @@
-"use client";
-
-import {
-    Carousel,
-    CarouselContent,
-    CarouselNext,
-    CarouselPrevious,
-} from "../ui/carousel";
-import CarouselLoading from "./CarouselLoading";
-import CutomCarouselItem from "./CutomCarouselItem";
+import getQueryClient from "@/utils/queries/getQueryClient";
+import { Carousel, CarouselNext, CarouselPrevious } from "../ui/carousel";
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { useGetComicsByCategories } from "@/utils/queries/useGetComicsByCategory";
+import { Suspense } from "react";
+import CarouselLoading from "./CarouselLoading";
+import CustomCarouselContent from "./CustomCarouselContent";
 
-export default function CustomCarousel() {
-    const { data, isLoading } = useGetComicsByCategories("newest");
+export default async function CustomCarousel() {
+    const queryClient = getQueryClient();
+    queryClient.prefetchQuery(useGetComicsByCategories({ category: "newest" }));
+    const dehydratedState = dehydrate(queryClient);
 
-    return isLoading ? (
-        <CarouselLoading />
-    ) : (
-        <Carousel className="w-[60vw]">
-            <CarouselContent>
-                {data?.map((comic) => (
-                    <CutomCarouselItem key={comic.href} comic={comic} />
-                ))}
-            </CarouselContent>
-            <CarouselPrevious />
-            <CarouselNext />
-        </Carousel>
+    return (
+        <HydrationBoundary state={dehydratedState}>
+            <Carousel className="w-[60vw]">
+                <Suspense fallback={<CarouselLoading />}>
+                    <CustomCarouselContent />
+                </Suspense>
+                <CarouselPrevious />
+                <CarouselNext />
+            </Carousel>
+        </HydrationBoundary>
     );
 }

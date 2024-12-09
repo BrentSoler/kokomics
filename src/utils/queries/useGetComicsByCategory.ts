@@ -1,10 +1,9 @@
 import { ApiResponse } from "@/types/ApiResponse";
-import { useQuery } from "@tanstack/react-query";
 import { api } from "../api";
 import { TComics } from "@/types/comics/TComics";
 
-export function useGetComicsByCategories(category: string) {
-    return useQuery({
+export function useGetComicsByCategories({ category }: { category: string }) {
+    return {
         queryKey: ["comics-categories", category],
         queryFn: async () => {
             try {
@@ -17,7 +16,9 @@ export function useGetComicsByCategories(category: string) {
                 }
 
                 return res.data;
-            } catch (e: any) { }
+            } catch (e: unknown) {
+                console.log((e as Error).message);
+            }
         },
-    });
+    };
 }

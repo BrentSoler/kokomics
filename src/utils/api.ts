@@ -1,5 +1,5 @@
 export const api = async (url: string, body?: object, req?: RequestInit) => {
-    const res = await fetch(`${url}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}${url}`, {
         ...req,
         headers: {
             accept: "application/json",

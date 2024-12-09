@@ -8,6 +8,10 @@ export default function Home() {
         <CustomCarousel />
       </div>
       <Separator />
+      <div>
+        <div></div>
+        <Separator orientation="horizontal" />
+      </div>
     </div>
   );
 }

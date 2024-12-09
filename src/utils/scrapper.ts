@@ -3,7 +3,6 @@ import puppeteer, { Page } from "puppeteer";
 export async function scrapper<T>(cb: (page: Page) => T, url?: string) {
     const browser = await puppeteer.launch({
         devtools: false,
-        headless: false,
     });
     const page = await browser.newPage();
 
@@ -33,10 +32,12 @@ export async function scrapper<T>(cb: (page: Page) => T, url?: string) {
         await browser.close();
 
         return cb_return;
-    } catch (err) {
+    } catch (e: unknown) {
         await page.close();
 
         await browser.close();
+
+        throw new Error((e as Error).message);
     }
 }
 
