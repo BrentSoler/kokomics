@@ -3,12 +3,12 @@
 import { TComics } from "@/types/comics/TComics";
 import { CarouselContent } from "../ui/carousel";
 import CutomCarouselItem from "./CutomCarouselItem";
-import { useGetComicsByCategories } from "@/utils/queries/useGetComicsByCategory";
+import { GetComicsByCategories } from "@/utils/queries/useGetComicsByCategory";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
 export default function CustomCarouselContent() {
     const { data } = useSuspenseQuery(
-        useGetComicsByCategories({ category: "newest" }),
+        GetComicsByCategories({ category: "newest" }),
     );
     return (
         <CarouselContent>

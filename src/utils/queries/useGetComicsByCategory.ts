@@ -2,7 +2,7 @@ import { ApiResponse } from "@/types/ApiResponse";
 import { api } from "../api";
 import { TComics } from "@/types/comics/TComics";
 
-export function useGetComicsByCategories({ category }: { category: string }) {
+export function GetComicsByCategories({ category }: { category: string }) {
     return {
         queryKey: ["comics-categories", category],
         queryFn: async () => {
